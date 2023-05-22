@@ -1,0 +1,86 @@
+<html>
+<head>
+    <title>Three.js Portfolio</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Create a scene
+        const scene = new THREE.Scene();
+
+        // Create a camera
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 10, 20); // Set the initial position of the camera
+        camera.lookAt(0, 0, 0); // Set the initial direction of the camera
+
+        // Create a renderer
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Create a directional light
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(10, 10, 10); // Set the position of the light
+        scene.add(light); // Add the light to the scene
+
+        // Create a plane geometry
+        const planeGeometry = new THREE.PlaneGeometry(100, 100);
+
+        // Create an array of materials for the plane
+        const materials = [
+            new THREE.MeshLambertMaterial({color: 0x00ff00}), // Green material
+            new THREE.MeshLambertMaterial({color: 0xff0000}), // Red material
+            new THREE.MeshLambertMaterial({color: 0x0000ff}), // Blue material
+            new THREE.MeshLambertMaterial({color: 0xffff00}), // Yellow material
+            new THREE.MeshLambertMaterial({color: 0x00ffff}), // Cyan material
+            new THREE.MeshLambertMaterial({color: 0xff00ff}), // Magenta material
+        ];
+
+        // Create an array of meshes for the plane
+        const meshes = [];
+
+        // Loop through the plane geometry and create a mesh for each face with a random material
+        for (let i = 0; i < planeGeometry.faces.length; i++) {
+            const face = planeGeometry.faces[i]; // Get the current face
+            const materialIndex = Math.floor(Math.random() * materials.length); // Get a random material index
+            face.materialIndex = materialIndex; // Set the material index for the face
+            const mesh = new THREE.Mesh(planeGeometry, materials[materialIndex]); // Create a mesh with the geometry and material
+            mesh.position.set(face.centroid.x, face.centroid.y, face.centroid.z); // Set the position of the mesh to the centroid of the face
+            mesh.lookAt(new THREE.Vector3(0, 1, 0)); // Set the orientation of the mesh to look up
+            meshes.push(mesh); // Add the mesh to the array of meshes
+            scene.add(mesh); // Add the mesh to the scene
+        }
+
+        // Create a variable to store the scroll position
+        let scrollPosition = 0;
+
+        // Add an event listener for the scroll event
+        window.addEventListener("scroll", function(event) {
+            scrollPosition = window.scrollY; // Update the scroll position with the current scroll value
+        });
+
+        // Create an animation loop
+        function animate() {
+            requestAnimationFrame(animate); // Request the next frame
+
+            // Update the camera position based on the scroll position
+            camera.position.x = scrollPosition * 0.01;
+            camera.position.z = 20 - scrollPosition * 0.01;
+
+            renderer.render(scene, camera); // Render the scene with the camera
+        }
+
+        animate(); // Start the animation loop
+
+    </script>
+</body>
+</html>
